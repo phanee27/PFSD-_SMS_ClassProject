@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+
+        .form-container, .list-container {
+            flex: 1;
+            margin: 10px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .delete-btn {
+            color: red;
+            text-decoration: none;
+            float: right;
+        }
+
+        .delete-btn:hover {
+            text-decoration: underline;
+        }
+
+        #search {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>Add Contact</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="text" name="phone" placeholder="Phone">
+                <input type="text" name="address" placeholder="Address">
+                <button type="submit">Add Contact</button>
+            </form>
+        </div>
+
+        <div class="list-container">
+            <h2>Contact List</h2>
+            <input type="text" id="search" placeholder="Search contacts..." onkeyup="filterContacts()">
+            <ul id="contact-list">
+                {% for contact in contacts %}
+                    <li>
+                        <strong>{{ contact.name }}</strong> - {{ contact.email }} - {{ contact.phone }} - {{ contact.address }}
+                        <a href="{% url 'adminapp:delete_contact' contact.id %}" class="delete-btn">Delete</a>
+                    </li>
+                {% empty %}
+                    <li>No contacts found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function filterContacts() {
+            const input = document.getElementById('search');
+            const filter = input.value.toLowerCase();
+            const ul = document.getElementById('contact-list');
+            const li = ul.getElementsByTagName('li');
+
+            for (let i = 0; i < li.length; i++) {
+                const txtValue = li[i].textContent || li[i].innerText;
+                li[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+            }
+        }
+    </script>
+</body>
+</html>
